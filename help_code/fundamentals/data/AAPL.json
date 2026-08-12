@@ -1,0 +1,13 @@
+{
+  "ticker": "AAPL",
+  "market_cap": 3676245065728,
+  "pe": 31.660759,
+  "pb": 41.700565,
+  "trailing_eps": 7.9,
+  "sector": "Technology",
+  "industry": "Consumer Electronics",
+  "debt_to_equity": 102.63,
+  "profit_margin": 0.27037,
+  "created_at": null,
+  "earnings": null
+}
