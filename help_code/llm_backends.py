@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
-"""Gemini REST and Claude CLI backends."""
+"""Gemini REST and Claude API backends."""
 from __future__ import annotations
 
 import itertools
 import json
 import os
 import pathlib
-import subprocess
-import tempfile
 import threading
 import time
 import urllib.error
@@ -96,40 +94,62 @@ def gemini_complete(prompt: str, model: str, temperature: float = 0.1,
 
 
 # --------------------------------------------------------------------------- #
-# Claude via the `claude -p` CLI
+# Claude via the Anthropic API
 # --------------------------------------------------------------------------- #
-# Feed-aware trading-agent framing. Overridable via CLAUDE_SYS_PROMPT.
 _CLAUDE_SYS_DEFAULT = (
     "You are an automated day-trading agent. Base each decision on ALL information in "
     "the user message — the technical indicators AND the market news / social feed. "
     "The feed is live market information; judge whether its items are material and let "
     "material news inform (and if warranted, override) the technical read. Respond with "
     "ONLY the JSON object the user specifies: no tools, no questions, no commentary.")
-# Neutral cwd so the CLI does not inherit caller session state.
-_CLAUDE_NEUTRAL_CWD = os.getenv("CLAUDE_CLI_CWD", tempfile.gettempdir())
+
+_anthropic_client = None
+_anthropic_lock = threading.Lock()
 
 
-def claude_cli_complete(prompt: str, model: str, temperature: float = 0.1,
-                        timeout: int = 150, max_retries: int = 2) -> str:
-    """`claude -p` has no temperature flag; arg accepted for call-site symmetry only."""
-    cwd = _CLAUDE_NEUTRAL_CWD if pathlib.Path(_CLAUDE_NEUTRAL_CWD).exists() else os.getcwd()
+def _get_anthropic_client():
+    global _anthropic_client
+    with _anthropic_lock:
+        if _anthropic_client is None:
+            from dotenv import load_dotenv
+            load_dotenv()
+            import anthropic
+            _anthropic_client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+        return _anthropic_client
+
+
+def claude_api_complete(prompt: str, model: str, temperature: float = 0.1,
+                        max_tokens: int = 4096, max_retries: int = 4) -> str:
+    """Call Anthropic Messages API. temperature accepted for call-site symmetry; not forwarded."""
+    import anthropic
+    client = _get_anthropic_client()
     sys_prompt = os.getenv("CLAUDE_SYS_PROMPT") or _CLAUDE_SYS_DEFAULT
-    cmd = ["claude", "-p", prompt, "--model", model,
-           "--system-prompt", sys_prompt,
-           "--disallowedTools", "Bash Edit Read Write WebSearch WebFetch Task",
-           "--no-session-persistence",
-           "--output-format", "text"]
-    # CLAUDE_QUIET=1 silences interactive CLI hooks in batch runs.
-    env = {**os.environ, "CLAUDE_QUIET": "1"}
     last_err = None
-    for _ in range(max_retries):
+    for attempt in range(max_retries):
         try:
-            res = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout, cwd=cwd, env=env)
-            out = (res.stdout or "").strip()
-            if out:
-                return out
-            last_err = f"empty stdout; stderr={(res.stderr or '')[:150]}"
-        except subprocess.TimeoutExpired:
-            last_err = "timeout"
+            resp = client.messages.create(
+                model=model,
+                max_tokens=max_tokens,
+                system=sys_prompt,
+                messages=[{"role": "user", "content": prompt}],
+            )
+            txt = "".join(b.text for b in resp.content if getattr(b, "type", None) == "text").strip()
+            if txt:
+                return txt
+            last_err = f"empty response (stop_reason={resp.stop_reason})"
+        except anthropic.RateLimitError as e:
+            last_err = f"rate limit: {e}"
+            time.sleep(min(30, 3 * (attempt + 1)))
+            continue
+        except anthropic.APIStatusError as e:
+            if e.status_code >= 500:
+                last_err = f"server {e.status_code}: {getattr(e, 'message', '')[:160]}"
+                time.sleep(3)
+                continue
+            raise RuntimeError(f"Anthropic {model} failed: {e.status_code} {getattr(e, 'message', '')[:160]}")
+        except anthropic.APIConnectionError as e:
+            last_err = f"net: {e}"
+            time.sleep(3)
+            continue
         time.sleep(2)
-    raise RuntimeError(f"claude -p {model} failed after {max_retries} tries: {last_err}")
+    raise RuntimeError(f"Anthropic {model} failed after {max_retries} retries: {last_err}")

@@ -27,6 +27,7 @@ Create `help_code/.env` for API keys (local-only, do not commit):
 ```
 OPENAI_API_KEY=<your key>
 GEMINI_API_KEY=<your key>
+ANTHROPIC_API_KEY=<your key>
 ```
 
 Only keys for the models used are required.
@@ -36,8 +37,6 @@ Optional keys for alternative news sources:
 BENZINGA_API_KEY=<your key>
 FINVIZ_API_TOKEN=<your key>
 ```
-
-For Claude backends, the code shells out to the vendor CLI; install it and authenticate per its docs.
 
 ### Run an attack eval
 

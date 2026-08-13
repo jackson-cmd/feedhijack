@@ -159,8 +159,8 @@ def decide(
         from llm_backends import gemini_complete
         content = gemini_complete(prompt, model, temperature=temperature)
     elif ml.startswith("claude"):
-        from llm_backends import claude_cli_complete
-        content = claude_cli_complete(prompt, model, temperature=temperature)
+        from llm_backends import claude_api_complete
+        content = claude_api_complete(prompt, model, temperature=temperature)
     else:
         from dotenv import load_dotenv
         load_dotenv()
