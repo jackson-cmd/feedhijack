@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Download fundamentals & earnings per ticker to fundamentals/data/{ticker}.json."""
+"""Download fundamentals and earnings per ticker."""
 
 from __future__ import annotations
 

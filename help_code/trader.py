@@ -175,7 +175,6 @@ def load_portfolio(initial_cash: float = 100_000.0) -> Portfolio:
         positions=positions,
         total_pnl=data.get("total_pnl", 0),
     )
-    # Load closed trades from log
     log_path = _data_dir() / "trades_log.jsonl"
     if log_path.exists():
         with open(log_path) as f:

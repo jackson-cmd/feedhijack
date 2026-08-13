@@ -44,7 +44,7 @@ def _parse_yyyymmdd(s: str) -> date:
 
 
 def _resolve_default_tickers_csv() -> Path | None:
-    """First existing path among project root / attacks/ tickers.csv."""
+    """Return the first existing candidate ticker CSV path."""
     for p in _DEFAULT_TICKERS_CSV_CANDIDATES:
         if p.is_file():
             return p
@@ -486,7 +486,7 @@ Return EXACT JSON keys:
             msgs.append({"role": "user", "content": extra_user})
         return msgs
 
-    # We ask the generator for BOTH injection text and quant signal in one JSON response.
+    # Ask the generator for both injection text and quant signal in one JSON response.
     resp = client.chat.completions.create(
         model=model,
         messages=_gen_messages(gen_prompt),
@@ -506,7 +506,6 @@ Return EXACT JSON keys:
         or ""
     ).strip()
 
-    # Normalize quant signal output.
     action = str(
         raw.get("quant_signal_action")
         or raw.get("action")
@@ -707,7 +706,6 @@ def adaptive_attack_loop(
     success_log_path = output_dir / "successful_prompts.jsonl"
     meta_path = output_dir / "attack_loop_meta.json"
 
-    # Reuse the same capital/margin numbers as main.py.
     from main import CAPITAL, MARGIN
 
     methods_all = _load_attack_methods(category)
@@ -783,7 +781,6 @@ def adaptive_attack_loop(
     benign_action = str(benign_dec.action).upper()
     observed_actions: set[str] = {benign_action}
 
-    # Print baseline first, then attack toward the other two decisions.
     print(
         f"[Baseline] no-attack decision={benign_dec.action} qty={benign_dec.quantity}",
         flush=True,
@@ -796,7 +793,6 @@ def adaptive_attack_loop(
     current_goal = target_actions[0]
     print(f"[Targets] try to reach decisions: {target_actions}", flush=True)
 
-    # Track whether we have visited all three actions.
     success = False
     final_dec: TradeDecision | None = None
     final_attack_id: str | None = None
@@ -824,7 +820,6 @@ def adaptive_attack_loop(
         # Keep the same technique subtype; sample different seed template text each iteration.
         base_method = random.choice(methods)
 
-        # Decide generator target for this iteration.
         goal_attempted = current_goal
         goal_qty = goal_quantity(goal_attempted)
         effective_quant_signal_mode = "none" if quant_signal_mode == "none" else "target"
@@ -907,7 +902,6 @@ def adaptive_attack_loop(
                     )
                     + "\n"
                 )
-            # Move to next unreached target action.
             remaining = [a for a in target_actions if a not in reached_targets]
             if remaining:
                 current_goal = remaining[0]
@@ -927,7 +921,6 @@ def adaptive_attack_loop(
             if completion_iter is None:
                 completion_iter = attempts
 
-        # Persist attempt
         with open(log_path, "a", encoding="utf-8") as f:
             f.write(
                 json.dumps(

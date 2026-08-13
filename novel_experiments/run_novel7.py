@@ -1,4 +1,4 @@
-"""N7-b: topology-aware adaptive attacker in a 2x2 of {single, debate} x {baseline, topo-aware}."""
+"""Topology-aware adaptive attacker: {single, debate} x {baseline, topo-aware}."""
 from __future__ import annotations
 
 import argparse

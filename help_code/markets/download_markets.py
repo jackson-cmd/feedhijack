@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Download OHLCV + TA to markets/data/{ticker}/{ticker}_{start}_{end}.csv."""
+"""Download OHLCV plus technical indicators per ticker."""
 
 from __future__ import annotations
 

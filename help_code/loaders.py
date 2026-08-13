@@ -1,4 +1,4 @@
-"""Load markets/, fundamentals/, news&socials/ data for backtest."""
+"""Load market, fundamentals, and news data for backtest."""
 from __future__ import annotations
 
 import json
@@ -23,7 +23,7 @@ def _parse_yyyymmdd(s: str) -> date:
 
 
 def load_markets_df(ticker: str, start: date, end: date) -> pd.DataFrame | None:
-    """Load one ticker's CSV from markets/data/TICKER/ that overlaps [start, end]. Concat if multiple files."""
+    """Load one ticker's CSV files overlapping [start, end] and concat."""
     ticker_dir = MARKETS_DIR / ticker.upper()
     if not ticker_dir.exists():
         return None
@@ -80,7 +80,7 @@ def build_snapshot_from_row(ticker: str, row: pd.Series) -> IntradaySnapshot:
 
 
 def load_fundamentals(ticker: str) -> dict[str, Any]:
-    """Load fundamentals/data/TICKER.json if exists."""
+    """Load ticker fundamentals if present."""
     path = FUNDAMENTALS_DIR / f"{ticker.upper()}.json"
     if not path.exists():
         return {}
@@ -91,7 +91,7 @@ def load_fundamentals(ticker: str) -> dict[str, Any]:
 
 
 def load_news_for_date(ticker: str, date_str: str) -> str:
-    """Load news for one date from news&socials/.../google_news_rss/YYYYMMDD.json, filter by ticker."""
+    """Load news for one date and filter by ticker."""
     path = NEWS_DIR / f"{date_str}.json"
     if not path.exists():
         return "No news for this date."

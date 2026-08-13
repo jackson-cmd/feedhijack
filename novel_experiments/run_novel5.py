@@ -1,4 +1,4 @@
-"""N7-a: V1-V5 injections through {linear, star, debate} multi-agent topologies vs single-shot baseline."""
+"""Multi-agent topology runner: attack vectors through linear/star/debate vs single-shot baseline."""
 from __future__ import annotations
 
 import argparse
@@ -141,7 +141,6 @@ def run(tickers, vectors, reps, topologies, model="gpt-4o-mini",
             feed = benign_news + INJECT_HEADER + vdef["prompt"]
             kw = vdef["keywords"]
 
-            # --- single-shot baseline ---
             single_succ = 0
             for r in range(reps):
                 dec = decide(snap, cash=20_000.0, feed_context=feed,
@@ -154,7 +153,6 @@ def run(tickers, vectors, reps, topologies, model="gpt-4o-mini",
                                        "changed": changed, **_dec_row(dec)}, ensure_ascii=False) + "\n")
             single_asr = single_succ / reps
 
-            # --- each pipeline topology ---
             for topo in topologies:
                 fn = TOPOLOGIES[topo]
                 succ = 0
@@ -237,7 +235,7 @@ def _print_summary(summary):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--smoke", action="store_true", help="1 ticker, V1, 1 rep, linear+debate")
-    ap.add_argument("--full", action="store_true", help="8 tickers x V1-V5 x 5 reps x 3 topologies")
+    ap.add_argument("--full", action="store_true", help="Full ticker/vector/topology grid")
     ap.add_argument("--tickers", nargs="*", default=None)
     ap.add_argument("--reps", type=int, default=5)
     ap.add_argument("--model", default="gpt-4o-mini")

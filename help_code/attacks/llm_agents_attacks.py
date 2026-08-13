@@ -434,7 +434,6 @@ def main() -> None:
                 }
             )
 
-    # Aggregate: by ticker and variant
     by_ticker: dict[str, list[AgentControlResult]] = {}
     for r in all_results:
         by_ticker.setdefault(r.ticker, []).append(r)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""E6 cross-model V-bench: replay top V-bench attacks across OpenAI base models."""
+"""Cross-model attack replay across OpenAI base models."""
 from __future__ import annotations
 
 import argparse

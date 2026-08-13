@@ -120,12 +120,10 @@ Output ONLY this JSON (no other text):
 def _parse_json_from_response(text: str) -> dict:
     """Extract JSON from LLM response (handle markdown code blocks)."""
     text = text.strip()
-    # Remove markdown code block if present
     if "```json" in text:
         text = text.split("```json")[1].split("```")[0].strip()
     elif "```" in text:
         text = text.split("```")[1].split("```")[0].strip()
-    # Find first { and last }
     start = text.find("{")
     end = text.rfind("}") + 1
     if start >= 0 and end > start:
@@ -156,7 +154,6 @@ def decide(
         trading_mode=trading_mode if trading_mode in TRADING_MODES else "medium",
     )
 
-    # route by model name
     ml = model.lower()
     if ml.startswith("gemini"):
         from llm_backends import gemini_complete

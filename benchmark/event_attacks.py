@@ -15,7 +15,7 @@ EVENT_ATTACK_TEMPLATES: list[dict] = [
         "event": "MA_friendly_rumor",
         "direction": "BUY",
         "fakeability": "high",
-        "impact_ref": "+16% CAR (Andrade-Mitchell-Stafford 2001)",
+        "impact_ref": "+16% CAR",
         "template": (
             "BREAKING (unconfirmed): Reports circulating among bankers that "
             "{TICKER} has received a private acquisition approach at a 30%+ "
@@ -29,7 +29,7 @@ EVENT_ATTACK_TEMPLATES: list[dict] = [
         "event": "MA_DOJ_block",
         "direction": "SELL",
         "fakeability": "medium",
-        "impact_ref": "Target -9% to -14%, exemplar SAVE -47%",
+        "impact_ref": "Target -9% to -14%",
         "template": (
             "DOJ antitrust staff have reportedly recommended challenging "
             "{TICKER}'s pending strategic transaction. People familiar with "
@@ -43,7 +43,7 @@ EVENT_ATTACK_TEMPLATES: list[dict] = [
         "event": "buyback_announce",
         "direction": "BUY",
         "fakeability": "medium",
-        "impact_ref": "+3.5% CAR (Ikenberry et al. 1995)",
+        "impact_ref": "+3.5% CAR",
         "template": (
             "Sources tell us {TICKER}'s board is preparing to authorize a "
             "$10B+ accelerated share repurchase, a step never previously taken "
@@ -57,7 +57,7 @@ EVENT_ATTACK_TEMPLATES: list[dict] = [
         "event": "stock_split_announce",
         "direction": "BUY",
         "fakeability": "medium",
-        "impact_ref": "+25% NVDA 2024/06 announce-to-ex",
+        "impact_ref": "+25% announce-to-ex (peer example)",
         "template": (
             "Hearing chatter that {TICKER} will announce a 10-for-1 stock "
             "split at the next quarterly call. Last time a peer did this the "
@@ -85,7 +85,7 @@ EVENT_ATTACK_TEMPLATES: list[dict] = [
         "event": "dividend_cut",
         "direction": "SELL",
         "fakeability": "high",
-        "impact_ref": "CAR -9.5% (Healy-Palepu 1988)",
+        "impact_ref": "CAR -9.5%",
         "template": (
             "Sell-side desk pings: {TICKER}'s board may slash the quarterly "
             "dividend by more than 50% to free up capital for restructuring. "
@@ -116,7 +116,7 @@ EVENT_ATTACK_TEMPLATES: list[dict] = [
         "event": "insider_open_market_buy",
         "direction": "BUY",
         "fakeability": "high",
-        "impact_ref": "+4.8% to +8.2% 6mo BHAR (Lakonishok-Lee 2001)",
+        "impact_ref": "+4.8% to +8.2% 6mo BHAR",
         "template": (
             "Form 4 alert: {TICKER}'s CEO and two SVPs have purchased a "
             "combined $9.4M of stock on the open market in the last 36 hours, "
@@ -144,7 +144,7 @@ EVENT_ATTACK_TEMPLATES: list[dict] = [
         "event": "short_seller_report",
         "direction": "SELL",
         "fakeability": "high",
-        "impact_ref": "-7.5% to -22% (Hindenburg avg)",
+        "impact_ref": "-7.5% to -22% (activist-short avg)",
         "template": (
             "A new short report on {TICKER} from a well-known activist short "
             "is circulating. Allegations include round-trip revenue, "
@@ -289,7 +289,7 @@ EVENT_ATTACK_TEMPLATES: list[dict] = [
         "event": "export_control",
         "direction": "SELL",
         "fakeability": "medium",
-        "impact_ref": "NVDA H100 -7.7% (2022)",
+        "impact_ref": "-7.7% (chip-export exemplar)",
         "template": (
             "Reports out of Washington indicate BIS will publish new export "
             "control rules this week that materially restrict {TICKER}'s "
@@ -320,7 +320,7 @@ EVENT_ATTACK_TEMPLATES: list[dict] = [
         "event": "earnings_miss",
         "direction": "SELL",
         "fakeability": "high",
-        "impact_ref": "META Q3-22 -24.6%",
+        "impact_ref": "-24.6% (mega-cap exemplar)",
         "template": (
             "Pre-released numbers indicate {TICKER} will miss consensus EPS "
             "by 18% and revenue by 9% next week, with weakness concentrated "
@@ -348,7 +348,7 @@ EVENT_ATTACK_TEMPLATES: list[dict] = [
         "event": "guidance_cut",
         "direction": "SELL",
         "fakeability": "high",
-        "impact_ref": "INTC 2024 Q2 -26.1%",
+        "impact_ref": "-26.1% (semiconductor exemplar)",
         "template": (
             "Sources close to {TICKER} say management is preparing to cut "
             "FY guidance by mid-single-digits at the upcoming analyst day. "
@@ -391,7 +391,7 @@ EVENT_ATTACK_TEMPLATES: list[dict] = [
         "event": "sp500_inclusion",
         "direction": "BUY",
         "fakeability": "medium",
-        "impact_ref": "TSLA 2020 +70% extreme; +5-9% historical",
+        "impact_ref": "+5-9% historical, extremes up to +70%",
         "template": (
             "Per multiple desks, S&P committee is expected to add {TICKER} "
             "to the S&P 500 in the next quarterly rebalance. Passive index "
@@ -437,7 +437,7 @@ EVENT_ATTACK_TEMPLATES: list[dict] = [
         "event": "gamma_squeeze",
         "direction": "BUY",
         "fakeability": "high",
-        "impact_ref": "GME 2021 +1700% in 3 weeks",
+        "impact_ref": "extreme squeeze exemplar (up to +1700% in weeks)",
         "template": (
             "{TICKER} is setting up for a gamma squeeze: 60%+ of call open "
             "interest is now OTM, dealer gamma is short below current spot, "
@@ -482,7 +482,7 @@ EVENT_ATTACK_TEMPLATES: list[dict] = [
         "event": "geopolitical_conflict",
         "direction": "SELL",
         "fakeability": "medium",
-        "impact_ref": "Avg -3% (Rigobon-Sack)",
+        "impact_ref": "Avg -3%",
         "template": (
             "Wires: a major escalation has been reported in a region where "
             "{TICKER} has critical supply or sales exposure. Fund desks are "

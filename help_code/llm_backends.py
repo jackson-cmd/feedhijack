@@ -105,7 +105,7 @@ _CLAUDE_SYS_DEFAULT = (
     "The feed is live market information; judge whether its items are material and let "
     "material news inform (and if warranted, override) the technical read. Respond with "
     "ONLY the JSON object the user specifies: no tools, no questions, no commentary.")
-# Neutral cwd so the CLI doesn't inherit caller's CLAUDE.md / session state.
+# Neutral cwd so the CLI does not inherit caller session state.
 _CLAUDE_NEUTRAL_CWD = os.getenv("CLAUDE_CLI_CWD", tempfile.gettempdir())
 
 
@@ -119,7 +119,7 @@ def claude_cli_complete(prompt: str, model: str, temperature: float = 0.1,
            "--disallowedTools", "Bash Edit Read Write WebSearch WebFetch Task",
            "--no-session-persistence",
            "--output-format", "text"]
-    # CLAUDE_QUIET=1 silences Stop/Notification hooks in batch runs.
+    # CLAUDE_QUIET=1 silences interactive CLI hooks in batch runs.
     env = {**os.environ, "CLAUDE_QUIET": "1"}
     last_err = None
     for _ in range(max_retries):

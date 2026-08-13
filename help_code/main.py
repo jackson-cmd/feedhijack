@@ -246,10 +246,8 @@ def _spy_equity_curve(all_dates: list[date], start: date, end: date) -> list[flo
 
     shares = CAPITAL / first_price
     curve = []
-    # Initial value
     curve.append(CAPITAL)
 
-    # Values for each trading day
     for d in all_dates:
         try:
             row = df.loc[df.index.date == d].iloc[0]
@@ -449,7 +447,6 @@ def run_backtest(tickers: list[str], start: date, end: date, mode: str = "medium
     metrics["realized_pnl"] = float(realized_pnl)
     metrics["unrealized_pnl"] = float(final_unrealized)
 
-    # SPY benchmark (same period)
     spy_curve = _spy_equity_curve(all_dates, start, end)
     if spy_curve is not None:
         spy_metrics = compute_metrics(spy_curve)
@@ -522,7 +519,7 @@ def main() -> None:
     ap.add_argument(
         "--attack-eval",
         action="store_true",
-        help="Run attack ASR study: control 4×5 + information 5×5 prompts, each repeated N times vs benign baseline",
+        help="Run attack ASR study over the prompt corpus vs benign baseline",
     )
     ap.add_argument("--attack-repeats", type=int, default=10, help="Repeats per attack prompt (default 10)")
     ap.add_argument(

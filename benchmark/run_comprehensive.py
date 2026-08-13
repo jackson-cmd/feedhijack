@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""E1-E5 benchmark campaign: main sweep and mode/state/lexical/transfer ablations."""
+"""Benchmark runner: main event-grounded sweep + mode/state/lexical/transfer ablations."""
 from __future__ import annotations
 
 import argparse
@@ -119,7 +119,7 @@ def run_attack(snap, mode, pos_summary, news, injection, direction, n_runs, *, s
 
 
 # ============================================================
-# E1: Main benchmark (event-grounded x all tickers)
+# Main event-grounded benchmark across tickers
 # ============================================================
 E1_ATTACK_IDS = {
     "EA-CA-MNA-RUMOR-1", "EA-CA-MNA-BLOCK-1", "EA-CA-BUYBACK-1",
@@ -194,7 +194,7 @@ def run_e1(output_dir: Path, repeats: int = 3, sleep_s: float = 0.0) -> list[Res
 
 
 # ============================================================
-# E2: Trading mode ablation
+# Trading mode ablation
 # ============================================================
 E2_TICKERS = ["AAPL", "TSLA", "NVDA", "AMZN", "MSFT"]
 E2_MODES = ["aggressive", "medium", "conservative"]
@@ -252,7 +252,7 @@ def run_e2(output_dir: Path, repeats: int = 3, sleep_s: float = 0.4) -> list[Res
 
 
 # ============================================================
-# E3: Position-state ablation
+# Position-state ablation
 # ============================================================
 E3_TICKERS = ["AAPL", "TSLA", "NVDA", "AMZN", "META"]
 E3_STATES = [
@@ -313,7 +313,7 @@ def run_e3(output_dir: Path, repeats: int = 3, sleep_s: float = 0.4) -> list[Res
 
 
 # ============================================================
-# E4: Lexical / phrasing ablations
+# Lexical / phrasing ablations
 # ============================================================
 LEX_BASES = [
     {
@@ -475,7 +475,7 @@ def run_e4(output_dir: Path, repeats: int = 5, sleep_s: float = 0.4) -> list[dic
 
 
 # ============================================================
-# E5: Cross-ticker transfer
+# Cross-ticker transfer
 # ============================================================
 def run_e5(output_dir: Path, repeats: int = 3, sleep_s: float = 0.4) -> list[dict]:
     """Test whether attack text tailored to a source ticker transfers to unrelated targets."""

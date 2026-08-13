@@ -1,7 +1,4 @@
-"""Multi-agent topologies (linear/star/debate), all terminating in brain.decide.
-
-Each topology returns (TradeDecision, stage_outputs, narrative_survived).
-"""
+"""Multi-agent topologies (linear/star/debate) terminating in brain.decide."""
 from __future__ import annotations
 
 import os
