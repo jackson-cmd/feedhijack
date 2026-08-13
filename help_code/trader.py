@@ -1,6 +1,4 @@
-"""
-Execution Module - Local P/L tracking and trade logging.
-"""
+"""Execution and P/L tracking."""
 from __future__ import annotations
 
 import json
@@ -50,10 +48,7 @@ class Portfolio:
         current_price: float,
         margin_allowance: float = 0.0,
     ) -> Optional[ClosedTrade]:
-        """
-        Apply BUY/SELL/HOLD. For BUY we allow using margin (cost <= cash + margin_allowance).
-        Returns ClosedTrade if a position was closed.
-        """
+        """Apply BUY/SELL/HOLD (BUY may use margin). Returns ClosedTrade on close."""
         if decision.action == "HOLD" or decision.quantity <= 0:
             return None
 

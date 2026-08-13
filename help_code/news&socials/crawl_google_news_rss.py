@@ -1,20 +1,5 @@
 #!/usr/bin/env python3
-"""Fetch daily news headlines and write one JSON per day to --out-dir.
-
-Sources (pick with --source or the NEWS_SOURCE env var):
-  google_news  (default, free, no key)
-  benzinga     (requires BENZINGA_API_KEY)
-  finviz       (public scrape by default; FINVIZ_API_TOKEN uses Elite export)
-
-Output shape (per YYYYMMDD.json), matching help_code/loaders.py:
-  {
-    "date":   "YYYY-MM-DD",
-    "source": "google_news",
-    "items":  [{"ticker","title","source","url","published_at"}, ...]
-  }
-
-Name kept as `crawl_google_news_rss.py` for backward-compat with help_code/main.py.
-"""
+"""Fetch daily news headlines to --out-dir as YYYYMMDD.json. --source: google_news|benzinga|finviz."""
 from __future__ import annotations
 
 import argparse
@@ -24,8 +9,7 @@ import sys
 from datetime import date, timedelta
 from pathlib import Path
 
-# make the sibling `providers` package importable without needing a parent package
-# (this file lives inside `news&socials/` whose name isn't a valid Python identifier)
+# parent dir isn't a valid Python identifier; add to path so `providers` imports
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from providers import benzinga, finviz, google_news_rss  # noqa: E402
 

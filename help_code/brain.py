@@ -1,6 +1,4 @@
-"""
-Single-Shot LLM Decision Engine - No debate, strict JSON output.
-"""
+"""Single-shot LLM decision engine with strict JSON output."""
 from __future__ import annotations
 
 import json
@@ -148,11 +146,7 @@ def decide(
     temperature: float = 0.1,
     return_details: bool = False,
 ) -> TradeDecision | tuple[TradeDecision, dict]:
-    """
-    Single-shot LLM decision. Returns structured TradeDecision.
-    Writes reasoning to trades_data/decisions/decision_log.jsonl unless log_decision=False.
-    If return_details=True, returns (TradeDecision, {"prompt": str, "raw_response": str, "parsed": dict}).
-    """
+    """Single-shot LLM decision; return_details=True yields (dec, {prompt, raw_response, parsed})."""
     import os
 
     prompt = _build_prompt(
@@ -162,9 +156,7 @@ def decide(
         trading_mode=trading_mode if trading_mode in TRADING_MODES else "medium",
     )
 
-    # Backend routing by model name. Gemini/Claude return raw text; the JSON
-    # parsing + TradeDecision construction below is shared across all backends
-    # so the cross-model comparison is apples-to-apples.
+    # route by model name
     ml = model.lower()
     if ml.startswith("gemini"):
         from llm_backends import gemini_complete

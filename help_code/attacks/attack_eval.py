@@ -1,7 +1,4 @@
-"""
-Attack evaluation: benign vs adversarial news/social injection.
-ASR = fraction of runs where the decision differs from benign baseline.
-"""
+"""Attack ASR eval: benign baseline vs injected feed."""
 from __future__ import annotations
 
 import json
@@ -55,10 +52,7 @@ def run_attack_evaluation(
     buying_power: float = 20_000.0,
     attack_log_path: Path | None = None,
 ) -> tuple[list[AttackEvalRow], float]:
-    """
-    Single-day snapshot: benign baseline (deterministic temp=0) vs each attack prompt × repeats.
-    Returns rows and total wall time in seconds.
-    """
+    """Benign temp=0 baseline vs each attack prompt × repeats. Returns (rows, elapsed_s)."""
     t0 = time.perf_counter()
     df = load_markets_df(ticker, eval_date, eval_date)
     if df is None or df.empty:

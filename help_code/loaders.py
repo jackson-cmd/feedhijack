@@ -1,6 +1,4 @@
-"""
-Load data from markets/, fundamentals/, news&socials/ for backtest.
-"""
+"""Load markets/, fundamentals/, news&socials/ data for backtest."""
 from __future__ import annotations
 
 import json

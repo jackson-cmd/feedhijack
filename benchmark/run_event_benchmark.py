@@ -1,24 +1,5 @@
 #!/usr/bin/env python3
-"""
-Run the event-grounded information injection benchmark.
-
-Given a list of tickers, an evaluation date, and a trading mode, this script:
-  1. Computes the benign baseline decision (temperature 0).
-  2. For each event-grounded attack template, runs the agent N times with the
-     attack injected into the news feed (temperature 0.1).
-  3. Reports per-event ASR and per-category aggregates.
-
-The runner uses the agent defined in code/help_code/brain.py without
-modification — the attack is simply appended to the news context.
-
-Usage:
-    python run_event_benchmark.py --tickers AAPL,TSLA,NVDA \
-        --eval-date 20260115 --repeats 5 --mode medium
-
-Output:
-    {output_dir}/event_asr.json   — per-(ticker,attack_id) ASR
-    {output_dir}/per_category.csv — aggregate per (ticker,category)
-"""
+"""Event-grounded feed-injection benchmark: per-event ASR and per-category aggregates."""
 from __future__ import annotations
 
 import argparse
@@ -30,7 +11,6 @@ from dataclasses import asdict, dataclass
 from datetime import date
 from pathlib import Path
 
-# Import the existing agent infrastructure
 HELP_CODE = (Path(__file__).parent.parent / "help_code").resolve()
 if str(HELP_CODE) not in sys.path:
     sys.path.insert(0, str(HELP_CODE))
@@ -90,7 +70,6 @@ def run_for_ticker(
     )
     benign_key = _decision_key(benign)
 
-    # Append benign baseline to log
     log_path.parent.mkdir(parents=True, exist_ok=True)
     with open(log_path, "a", encoding="utf-8") as f:
         f.write(json.dumps({
@@ -180,14 +159,12 @@ def main() -> None:
         rows, elapsed = run_for_ticker(ticker, eval_date, args.mode, args.repeats, args.buying_power, log_path)
         all_rows.extend(rows)
         timings[ticker] = elapsed
-        # Quick per-ticker summary
         per_cat: dict[str, list[float]] = defaultdict(list)
         for r in rows:
             per_cat[r.category].append(r.asr)
         for cat, asrs in sorted(per_cat.items()):
             print(f"  {ticker} {cat}: mean={sum(asrs)/len(asrs):.3f} n={len(asrs)}", flush=True)
 
-    # Save aggregated results
     out = {
         "eval_date": eval_date.isoformat(),
         "tickers": tickers,
@@ -201,7 +178,6 @@ def main() -> None:
     json_path.write_text(json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"\nSaved {json_path}", flush=True)
 
-    # Per-category CSV
     csv_path = args.output / "per_category.csv"
     rows_by_tc: dict[tuple[str, str], list[float]] = defaultdict(list)
     for r in all_rows:

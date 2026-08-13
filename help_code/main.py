@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""
-Backtest: tickers + date range. Reads from markets/, fundamentals/, news&socials/.
-Capital $10,000 + margin $10,000. Logs orders and decisions, computes performance.
-One-shot: missing data is auto-downloaded (markets, fundamentals, news by tickers first).
-"""
+"""Backtest driver over a ticker+date range."""
 from __future__ import annotations
 
 import argparse
@@ -106,10 +102,7 @@ def _ensure_fundamentals(tickers: list[str]) -> None:
 
 
 def _ensure_news(tickers: list[str], start: date, end: date, source: str = "google_news") -> None:
-    """Download news for date range if any trading day is missing.
-
-    source: google_news (default, free) | benzinga (BENZINGA_API_KEY) | finviz (public scrape, or FINVIZ_API_TOKEN).
-    """
+    """Fetch news for any missing trading day. source: google_news|benzinga|finviz."""
     missing_days = []
     for d in _trading_days(start, end):
         if not (NEWS_DIR / f"{_date_str(d)}.json").exists():
@@ -582,7 +575,7 @@ def main() -> None:
         run_dir = make_run_directory(args.output_base, args.run_label)
         write_readme(
             run_dir,
-            "main.py run\n===========\nsummary/run_meta.json — args\nsummary/metrics.json — backtest metrics (if run)\nsummary/attack_asr.json — attack table (if --attack-eval)\nlogs/attack_study_log.jsonl — attack prompts (if --attack-eval)\nlogs/console.txt — full console capture\n",
+            "main.py run\nsummary/: run_meta.json, metrics.json, attack_asr.json\nlogs/: attack_study_log.jsonl, console.txt\n",
         )
         meta = {
             "script": "main.py",

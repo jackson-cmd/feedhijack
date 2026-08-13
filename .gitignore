@@ -1,0 +1,9 @@
+.env
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+# fetched news JSON (crawler source stays tracked)
+help_code/news&socials/headlines_crawler/output/
+**/results/
+trades_data/

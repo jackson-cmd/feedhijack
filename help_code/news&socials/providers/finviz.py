@@ -1,14 +1,4 @@
-"""Finviz news provider.
-
-Two paths:
-  - FINVIZ_API_TOKEN set  → uses Finviz Elite export.ashx CSV feed.
-  - Otherwise             → scrapes the public per-ticker news table on
-                            https://finviz.com/quote.ashx?t=TICKER
-Finviz's public page shows only the most recent ~50 headlines per ticker with
-timestamps like "12:34PM" (today) or "Nov-08-25 04:32PM"; we filter to the
-requested day. Historical days beyond ~1 week aren't reachable this way — for
-deep backtests use benzinga or set FINVIZ_API_TOKEN.
-"""
+"""Finviz news provider (Elite CSV if FINVIZ_API_TOKEN, else public scrape)."""
 from __future__ import annotations
 
 import csv

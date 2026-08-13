@@ -1,8 +1,4 @@
-"""Google News RSS provider — free, no API key required.
-
-Uses the public Google News RSS endpoint, which supports a date-range operator.
-Returns items with title/source/url/published_at, filtered to the requested day.
-"""
+"""Google News RSS provider (no key)."""
 from __future__ import annotations
 
 import re

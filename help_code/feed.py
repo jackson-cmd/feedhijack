@@ -1,6 +1,4 @@
-"""
-News & Social Feed Loader - Fast ingestion for decision context.
-"""
+"""News & social feed loader for decision context."""
 from __future__ import annotations
 
 import json

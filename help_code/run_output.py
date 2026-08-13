@@ -1,6 +1,4 @@
-"""
-Timestamped run directories + tee stdout/stderr to a log file (terminal still shows output).
-"""
+"""Timestamped run directories and stdout/stderr tee to log file."""
 from __future__ import annotations
 
 import json
@@ -36,9 +34,7 @@ class TeeIO:
 
 
 def make_run_directory(base: Path, label: str = "run") -> Path:
-    """
-    Create base / {safe_label}_{YYYYMMDD_HHMMSS}/ with logs/ and by_ticker/ subdirs.
-    """
+    """Create base/{safe_label}_{YYYYMMDD_HHMMSS}/ with logs/, by_ticker/, summary/."""
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     safe = "".join(c if c.isalnum() or c in "-_" else "_" for c in label.strip()) or "run"
     path = base.expanduser().resolve() / f"{safe}_{ts}"

@@ -1,18 +1,5 @@
 #!/usr/bin/env python3
-"""
-E6: Cross-model V-bench. Replays the 5 most-effective V-bench attacks on
-multiple OpenAI base models to test whether the rank-order of vector
-effectiveness generalises beyond GPT-4o-mini.
-
-Models: gpt-4o-mini (reference), gpt-4o, gpt-4o-mini-2024-07-18 (frozen),
-        gpt-3.5-turbo (older).
-Tickers: 5 (AAPL, TSLA, NVDA, AMZN, MSFT)
-Repeats: 3
-Total calls: 4 models * 5 tickers * 5 attacks * 3 reps + 4 models * 5 baselines
-            = 320 attack calls.
-
-Outputs: results/e6_cross_model_results.json + e6_log.jsonl
-"""
+"""E6 cross-model V-bench: replay top V-bench attacks across OpenAI base models."""
 from __future__ import annotations
 
 import argparse

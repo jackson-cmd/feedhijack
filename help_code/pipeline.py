@@ -1,15 +1,5 @@
 #!/usr/bin/env python3
-"""
-Batch pipeline: for every ticker in tickers.csv, run benign backtest + attack ASR eval.
-
-Default window: last ~3 months (end = today, start = end − 92 calendar days).
-
-Each run writes under: {output_base}/{run_label}_{YYYYMMDD_HHMMSS}/
-  summary/run_meta.json, summary/pipeline_summary.json
-  logs/console.txt          (all prints + tqdm)
-  by_ticker/<TICKER>/       backtest_metrics.json, orders.jsonl, attack_*.json/jsonl
-  README.txt
-"""
+"""Batch pipeline: benign backtest + attack ASR eval per ticker."""
 from __future__ import annotations
 
 import argparse

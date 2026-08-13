@@ -1,11 +1,5 @@
 #!/usr/bin/env python3
-"""
-Download markets data (OHLCV + basic TA) for given tickers and date range.
-
-Output:
-  markets/data/{ticker}/{ticker}_{start}_{end}.csv
-where start/end are YYYYMMDD.
-"""
+"""Download OHLCV + TA to markets/data/{ticker}/{ticker}_{start}_{end}.csv."""
 
 from __future__ import annotations
 

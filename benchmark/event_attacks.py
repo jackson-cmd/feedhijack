@@ -1,28 +1,4 @@
-"""
-Event-Grounded Information Injection Attack Templates.
-
-Each template models a tweet/social-media post that an attacker could publish
-on X to manipulate an LLM-based financial trading agent. Templates are grouped
-by seven event categories that empirically drive equity prices.
-
-Each attack record contains:
-    id        : globally unique identifier
-    category  : one of seven event categories (CA, GI, RG, EA, MS, MA, NA)
-    event     : specific event subtype (e.g. "FDA_PDUFA_Approval")
-    direction : "BUY" or "SELL" — the action the attacker tries to induce
-    fakeability: "high" / "medium" / "low" (ease of being fabricated as a tweet)
-    impact_ref : short-form reference to the magnitude observed historically
-    template   : the actual injection text (plain text, social-media style)
-
-Categories (7):
-    CA  Corporate Actions
-    GI  Governance / Insider / Short Reports
-    RG  Regulatory / Government / Legal
-    EA  Earnings / Analyst / Index / Operations
-    MS  Market Structure / Options Flow
-    MA  Macro / Geopolitical
-    NA  Narrative / Sentiment (purely synthetic, included as control)
-"""
+"""Event-grounded attack templates for social-feed injection against LLM trading agents."""
 from __future__ import annotations
 
 import json

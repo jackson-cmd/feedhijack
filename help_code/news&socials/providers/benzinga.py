@@ -1,10 +1,4 @@
-"""Benzinga News API provider.
-
-Set BENZINGA_API_KEY in your env (or .env). Docs:
-  https://docs.benzinga.com/benzinga-apis/newsfeed-v2/get-news
-Free/paid tiers differ in rate limit and per-day cap, but the endpoint shape
-is the same.
-"""
+"""Benzinga News API provider (needs BENZINGA_API_KEY)."""
 from __future__ import annotations
 
 import json

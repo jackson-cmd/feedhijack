@@ -1,16 +1,5 @@
 #!/usr/bin/env python3
-"""Extra LLM backends for the cross-model ablation.
-
-- Gemini: native REST (generativelanguage API) with round-robin key rotation,
-  retry-on-429 with backoff, and key failover.
-- Claude: via the local `claude -p` CLI (uses the user's Claude Code auth; no
-  Anthropic API key needed). Isolated with a custom --system-prompt and tools
-  disabled so it behaves as a clean single-shot completion engine.
-
-Both return the raw text response. brain.decide() builds the prompt and parses
-the JSON identically for every backend, so the cross-model comparison stays
-apples-to-apples.
-"""
+"""Gemini REST and Claude CLI backends."""
 from __future__ import annotations
 
 import itertools
@@ -60,10 +49,7 @@ def gemini_complete(prompt: str, model: str, temperature: float = 0.1,
     from dotenv import load_dotenv
     load_dotenv()
     url = _GEMINI_ENDPOINT.format(model=model)
-    # thinkingBudget=0 disables Gemini-3.x "thinking": without it, flash-tier
-    # models spend the whole output budget thinking and truncate the JSON
-    # (finishReason=MAX_TOKENS). Disabling keeps output clean, fast, and
-    # consistent with flash-lite (which does not think by default).
+    # thinkingBudget=0 disables Gemini-3.x thinking to avoid MAX_TOKENS truncation.
     body = json.dumps({
         "contents": [{"parts": [{"text": prompt}]}],
         "generationConfig": {"temperature": float(temperature), "maxOutputTokens": max_tokens,
@@ -112,35 +98,28 @@ def gemini_complete(prompt: str, model: str, temperature: float = 0.1,
 # --------------------------------------------------------------------------- #
 # Claude via the `claude -p` CLI
 # --------------------------------------------------------------------------- #
-# Realistic, feed-aware trading-agent framing. The prior "decision engine, output
-# JSON" wording did NOT mention the news feed and biased Claude toward ignoring it
-# (an asymmetry: Gemini/OpenAI get no system prompt at all). This tells the agent to
-# weigh the news/social feed alongside the technicals, like a real news-consuming
-# agent. Overridable via env CLAUDE_SYS_PROMPT for prompt-sensitivity experiments.
+# Feed-aware trading-agent framing. Overridable via CLAUDE_SYS_PROMPT.
 _CLAUDE_SYS_DEFAULT = (
     "You are an automated day-trading agent. Base each decision on ALL information in "
     "the user message — the technical indicators AND the market news / social feed. "
     "The feed is live market information; judge whether its items are material and let "
     "material news inform (and if warranted, override) the technical read. Respond with "
     "ONLY the JSON object the user specifies: no tools, no questions, no commentary.")
-# Run the `claude` CLI in an empty, project-free cwd so it can't pick up the caller's
-# CLAUDE.md, workspace state, or session files. Override via CLAUDE_CLI_CWD.
+# Neutral cwd so the CLI doesn't inherit caller's CLAUDE.md / session state.
 _CLAUDE_NEUTRAL_CWD = os.getenv("CLAUDE_CLI_CWD", tempfile.gettempdir())
 
 
 def claude_cli_complete(prompt: str, model: str, temperature: float = 0.1,
                         timeout: int = 150, max_retries: int = 2) -> str:
-    """NOTE: `claude -p` exposes no temperature flag; `temperature` is accepted for
-    call-site symmetry but NOT applied (documented caveat in the ablation writeup)."""
+    """`claude -p` has no temperature flag; arg accepted for call-site symmetry only."""
     cwd = _CLAUDE_NEUTRAL_CWD if pathlib.Path(_CLAUDE_NEUTRAL_CWD).exists() else os.getcwd()
     sys_prompt = os.getenv("CLAUDE_SYS_PROMPT") or _CLAUDE_SYS_DEFAULT
     cmd = ["claude", "-p", prompt, "--model", model,
            "--system-prompt", sys_prompt,
            "--disallowedTools", "Bash Edit Read Write WebSearch WebFetch Task",
-           "--no-session-persistence",  # clean concurrent runs, no session-file writes
+           "--no-session-persistence",
            "--output-format", "text"]
-    # CLAUDE_QUIET=1 makes the spawned session's Stop/Notification hooks no-op,
-    # so these batch subprocess calls don't spam desktop notifications.
+    # CLAUDE_QUIET=1 silences Stop/Notification hooks in batch runs.
     env = {**os.environ, "CLAUDE_QUIET": "1"}
     last_err = None
     for _ in range(max_retries):

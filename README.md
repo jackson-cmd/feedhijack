@@ -86,22 +86,21 @@ python run_e6_cross_model.py
 python run_e6_extended.py
 ```
 
-**N1–N7** (novel experiments):
+**N1–N6** (novel experiments):
 ```bash
 cd novel_experiments
 python run_novel.py --experiment all --output results/
 ```
 
-N1 is the scaling law — turns out smarter models aren't much better at resisting information injection. N3 measures how many corroborating fake sources it takes. N4 checks positional bias in the news feed. The topology experiments test whether multi-agent setups (debate, researcher-writer) are more robust than single-shot. (Spoiler: they propagate the injected narrative instead of catching it.)
+N1 is the scaling law — turns out smarter models aren't much better at resisting information injection. N3 measures how many corroborating fake sources it takes. N4 checks positional bias in the news feed.
 
-### Figures
-
+**N7** (multi-agent topologies):
 ```bash
-cd benchmark && python make_figures.py
-cd ../novel_experiments && python make_novel_figures.py
+python run_novel5.py    # V1-V5 through linear/star/debate topologies
+python run_novel7.py    # topology-aware adaptive attacker
 ```
 
-Outputs land in `figures_pdf/`.
+Debate and researcher-writer setups propagate the injected narrative instead of catching it.
 
 ## News sources
 

@@ -1,10 +1,9 @@
-# FeedHijack artifact dependencies (Python 3.10+).
+# Python 3.10+
 openai>=1.0
 pandas
 numpy
 python-dotenv
 pydantic
-matplotlib
 requests
 tqdm
 yfinance

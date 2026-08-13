@@ -1,16 +1,5 @@
 #!/usr/bin/env python3
-"""
-E6-Extended: Cross-model ablation with newer/cheaper OpenAI models.
-
-Models: gpt-4.1-mini, gpt-4.1-nano, o4-mini, gpt-4o-mini (reference)
-Tickers: 5 (AAPL, TSLA, NVDA, AMZN, MSFT)
-Attacks: 5 strongest V-bench attacks (same as E6)
-Repeats: 3
-Budget estimate: ~4 models * 5 tickers * 5 attacks * 3 reps = 300 attack calls + baselines
-                 ~$5-10 total at cheap model pricing
-
-Outputs: results/e6_extended_results.json + e6_extended_log.jsonl
-"""
+"""E6-extended cross-model V-bench: replay across newer OpenAI models (gpt-4.1, o4)."""
 from __future__ import annotations
 
 import argparse
@@ -48,10 +37,10 @@ TICKERS = ["AAPL", "TSLA", "NVDA", "AMZN", "MSFT"]
 EVAL_DATE = date(2026, 1, 5)
 
 MODELS = [
-    "gpt-4o-mini",       # reference (already in E6, re-run for consistency)
-    "gpt-4.1-mini",      # newer cheap model
-    "gpt-4.1-nano",      # cheapest model
-    "o4-mini",           # reasoning model
+    "gpt-4o-mini",
+    "gpt-4.1-mini",
+    "gpt-4.1-nano",
+    "o4-mini",
 ]
 
 
@@ -97,7 +86,6 @@ def main() -> None:
             news = load_news_for_date(ticker, eval_d.strftime("%Y%m%d"))
             pos = "No open position."
 
-            # Benign baseline
             try:
                 benign = decide(snap, cash=20_000, feed_context=news, position_summary=pos,
                                 trading_mode="medium", model=model, log_decision=False, temperature=0.0)
@@ -112,7 +100,6 @@ def main() -> None:
                 "decision": {"action": benign.action, "quantity": benign.quantity},
             }) + "\n"); log_f.flush()
 
-            # Attack runs
             for atk in ATTACKS:
                 feed = news + "\n\n--- Adversarial injection ---\n" + atk["text"]
                 n_succ = 0
@@ -150,7 +137,6 @@ def main() -> None:
     out.write_text(json.dumps(rows, indent=2))
     print(f"\nSaved {out} ({len(rows)} rows)")
 
-    # Summary table
     by_mv = defaultdict(list)
     for r in rows:
         by_mv[(r["model"], r["vector"])].append(r["asr"])
@@ -177,7 +163,6 @@ def main() -> None:
             line += f"{sum(vals)/len(vals):8.3f}"
         print(line)
 
-    # Per-model mean
     by_m = defaultdict(list)
     for r in rows:
         by_m[r["model"]].append(r["asr"])

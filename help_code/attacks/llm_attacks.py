@@ -1,15 +1,5 @@
 #!/usr/bin/env python3
-"""
-LLM-driven attack generator + adaptive loop.
-
-Goal:
-1) Take base "attack methods" from information_injection_prompts.py (and optionally control_injection_prompts.py),
-   ask an LLM to rewrite them into ticker-specific malicious news/social context.
-2) Optionally request the generator to also output a quant trade signal: BUY/SELL/HOLD + quantity.
-3) Adaptive loop: on a single eval day (e.g. AAPL at YYYYMMDD), compute benign decision baseline,
-   then repeatedly generate attacks and call brain.decide until the decision changes (ASR-style),
-   or until max iterations is reached.
-"""
+"""LLM-driven attack generator with adaptive iterate-until-flip loop."""
 from __future__ import annotations
 
 import argparse
@@ -30,7 +20,7 @@ from openai import OpenAI
 from pydantic import BaseModel, Field
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
-# Make sure we can import project modules even when running from `attacks/` CWD.
+# sys.path shim
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -44,7 +34,6 @@ from loaders import build_snapshot_from_row, load_markets_df, load_news_for_date
 
 
 def _arg_path(s: str) -> Path:
-    """argparse `type=` hook: always construct a pathlib.Path (never rebind `Path` by mistake)."""
     return pathlib.Path(s)
 
 
@@ -107,10 +96,7 @@ class GeneratedAttack(BaseModel):
 
 
 def _load_attack_methods(category: str) -> list[dict[str, str]]:
-    """
-    Return flattened methods list:
-      {category, subtype, id, prompt_text}
-    """
+    """Flattened methods: [{category, subtype, id, prompt_text}, ...]."""
     if category == "information_injection":
         from attacks.information_injection_prompts import INFORMATION_INJECTION_PROMPTS
 
@@ -152,11 +138,7 @@ def _resolve_subtype_alias(
     attack: str | None,
     subtype: str | None,
 ) -> str | None:
-    """
-    Resolve a user-friendly name (e.g. "fact", "fact_poisoning") to a concrete
-    subtype key. --subtype and --attack use the same rules; if both are set,
-    subtype wins (only one should be passed for a single intent).
-    """
+    """Resolve short name to concrete subtype key (--subtype wins over --attack)."""
     raw = (subtype or attack or "").strip()
     if not raw:
         return None
@@ -193,9 +175,7 @@ def _list_subtypes_for_category(category: str) -> list[str]:
 
 
 def _print_results_table(rows: list[dict[str, Any]], *, max_iters: int | None = None) -> None:
-    """
-    Print a compact per-ticker table for quick visual inspection.
-    """
+    """Compact per-ticker results table."""
     if not rows:
         return
     headers = [
@@ -403,9 +383,7 @@ def generate_ticker_specific_attack(
     feedback_context: str = "",
     agent_system_prompt: str | None = None,
 ) -> tuple[GeneratedAttack, str]:
-    """
-    Return (GeneratedAttack, generator_prompt_used).
-    """
+    """Return (GeneratedAttack, generator_prompt_used)."""
     import os
     from dotenv import load_dotenv
 
@@ -613,9 +591,7 @@ def _build_attack_feed_context(
     quant_signal_quantity: int,
     quant_signal_mode: str,
 ) -> str:
-    """
-    Append the injection text, optionally including a quant trade instruction that aims to steer BUY/SELL/HOLD.
-    """
+    """Append injection text (and optional quant trade instruction) to benign feed."""
     out = benign_news.strip()
     if out:
         out += "\n\n"
@@ -653,9 +629,7 @@ def _write_subtype_avg_attempts_csv(
     out_dir: Path,
     ticker_results: list[tuple[str, str, LoopResult]],
 ) -> Path | None:
-    """
-    One row per subtype: mean total attempts across runs (each run = one ticker × that subtype).
-    """
+    """One row per subtype: mean total attempts across (ticker × subtype) runs."""
     if not ticker_results:
         return None
     attempts_by: dict[str, list[int]] = defaultdict(list)
@@ -869,8 +843,7 @@ def adaptive_attack_loop(
             feedback_context=feedback_context,
         )
 
-        # Important: when running adaptive target loop, enforce the quant signal injected into
-        # feed context to match the current goal. Do not rely on generator's own signal output.
+        # Force injected quant signal to current goal in target mode.
         applied_quant_action = attack.quant_signal_action
         applied_quant_qty = attack.quant_signal_quantity
         if effective_quant_signal_mode == "target":

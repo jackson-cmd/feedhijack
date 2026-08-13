@@ -1,6 +1,4 @@
-"""
-Fast Data Ingestion Module - OHLCV + RSI, MACD, Bollinger Bands.
-"""
+"""OHLCV + RSI, MACD, Bollinger Bands data ingestion."""
 from __future__ import annotations
 
 import asyncio
@@ -15,8 +13,7 @@ import yfinance as yf
 class IntradaySnapshot:
     """Condensed market snapshot for LLM decision."""
     ticker: str
-    # NOTE: For adversarial evaluations we treat "price" as the day's open price
-    # (agent's perceived anchor). The latest observed price is provided separately.
+    # price = day's open (agent anchor); last_price = latest observed
     price: float
     last_price: float
     vwap: float
@@ -142,10 +139,7 @@ def fetch_ohlcv(ticker: str, interval: str = "5m", period: str = "5d") -> pd.Dat
 
 
 def build_snapshot(ticker: str, df_5m: Optional[pd.DataFrame] = None) -> Optional[IntradaySnapshot]:
-    """
-    Build condensed snapshot with indicators.
-    Uses 5m data if provided, else fetches.
-    """
+    """Build snapshot with indicators; uses 5m data if provided, else fetches."""
     if df_5m is None or df_5m.empty:
         df_5m = fetch_ohlcv(ticker, interval="5m", period="5d")
     if df_5m.empty:
